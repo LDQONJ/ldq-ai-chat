@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ElMessage } from 'element-plus'
 
 const host = import.meta.env.VITE_API_HOST
 
@@ -33,12 +34,19 @@ service.interceptors.response.use(
     // 处理统一响应体 R
     if (res.code === 200) {
       return res.data
+    } else if (res.code === 401) {
+      ElMessage.error(res.msg || '登录过期，请重新登录')
+      localStorage.removeItem('token')
     } else {
       // 处理业务错误
       return Promise.reject(new Error(res.msg || 'Error'))
     }
   },
   error => {
+    if (error.response && error.response.status === 429) {
+      ElMessage.error('访问频繁，稍后再试')
+      return Promise.reject(new Error('访问频繁，稍后再试'))
+    }
     return Promise.reject(error)
   },
 )

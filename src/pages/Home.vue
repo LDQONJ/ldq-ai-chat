@@ -208,7 +208,6 @@ const createSession = async () => {
   try {
     const sessionId = await sessionApi.create()
     if (sessionId) {
-      localStorage.setItem('sessionId', sessionId)
       localStorage.setItem('isNewSession', 'true')
       store.setActive(sessionId)
       store.messagesMap[sessionId] = []
@@ -268,7 +267,6 @@ const createChatFromCollapsed = async () => {
     if (newSessionId) {
       store.messagesMap[newSessionId] = []
       store.setActive(newSessionId)
-      localStorage.setItem('sessionId', newSessionId)
       localStorage.setItem('isNewSession', 'true')
       sessionStorage.setItem('is_session_active', 'true')
 

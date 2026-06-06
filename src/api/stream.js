@@ -10,6 +10,7 @@ export async function streamChat(
   modelId,
   search = false,
   audio = null,
+  sessionId = null,
 ) {
   console.log(messages)
   const userMessage = messages.filter(msg => msg.role === 'user')
@@ -28,7 +29,7 @@ export async function streamChat(
       ...headers,
     },
     body: JSON.stringify({
-      sessionId: localStorage.getItem('sessionId'),
+      sessionId: sessionId || localStorage.getItem('sessionId'),
       text: userMessage[userMessage.length - 1].content,
       think,
       prompt,
@@ -41,6 +42,9 @@ export async function streamChat(
   })
 
   if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error('访问频繁，稍后再试')
+    }
     throw new Error(`HTTP error! status: ${res.status}`)
   }
 
@@ -100,6 +104,14 @@ export async function generateTitle(id, onChunk) {
       ...headers,
     },
   })
+
+  if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error('访问频繁，稍后再试')
+    }
+    throw new Error(`HTTP error! status: ${res.status}`)
+  }
+
   const reader = res.body.getReader()
   const decoder = new TextDecoder('utf-8')
 
@@ -153,6 +165,9 @@ export async function streamASR(fileName, onChunk) {
   })
 
   if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error('访问频繁，稍后再试')
+    }
     throw new Error(`ASR error! status: ${res.status}`)
   }
 
@@ -210,6 +225,9 @@ export async function streamTTS(messageId) {
   })
 
   if (!res.ok) {
+    if (res.status === 429) {
+      throw new Error('访问频繁，稍后再试')
+    }
     throw new Error(`TTS error! status: ${res.status}`)
   }
 

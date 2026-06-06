@@ -13,15 +13,18 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { Capacitor } from '@capacitor/core'
 import { App as CapApp } from '@capacitor/app'
 import { Browser } from '@capacitor/browser'
 import { updateApi } from '@/api/update'
 import { ElMessageBox } from 'element-plus'
+import { useChatStore } from '@/store/chat'
 
 const route = useRoute()
+const router = useRouter()
+const chatStore = useChatStore()
 const transitionName = ref('')
 
 const checkUpdate = async () => {
@@ -33,7 +36,6 @@ const checkUpdate = async () => {
 
     const res = await updateApi.checkUpdate({
       versionName: 'v' + info.version,
-
     })
 
     // 如果返回 "yes"，说明有新版本
@@ -59,8 +61,42 @@ const checkUpdate = async () => {
   }
 }
 
+// 监听安卓系统返回键
+let backButtonListener = null
+const setupBackButton = () => {
+  if (Capacitor.getPlatform() !== 'android') return
+
+  backButtonListener = CapApp.addListener('backButton', ({ canGoBack }) => {
+    // 1. 如果侧边栏展开（仅限移动端），则收起
+    if (window.innerWidth < 768 && chatStore.sidebarVisible) {
+      chatStore.setSidebarVisible(false)
+      return
+    }
+
+    // 2. 如果在设置页，则返回主页
+    if (route.path === '/settings') {
+      router.push('/home')
+      return
+    }
+
+    // 3. 其他情况：如果有历史记录则返回，否则退出应用
+    if (canGoBack) {
+      window.history.back()
+    } else {
+      CapApp.exitApp()
+    }
+  })
+}
+
 onMounted(() => {
   checkUpdate()
+  setupBackButton()
+})
+
+onUnmounted(() => {
+  if (backButtonListener) {
+    backButtonListener.remove()
+  }
 })
 
 watch(

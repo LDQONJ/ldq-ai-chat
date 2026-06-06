@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: env.VITE_BUILD_OUT_DIR || 'dist',
+      emptyOutDir: true,
     },
   }
 })

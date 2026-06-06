@@ -33,9 +33,9 @@ export const useChatStore = defineStore('chat', {
     async fetchModels() {
       try {
         const listRes = await modelApi.list()
-        // 如果当前没有选择模型，默认选择第一个
+        // 如果当前没有选择模型，默认选择通义千问3.5 9B
         if (!this.currentModelId && listRes.length > 0) {
-          this.setCurrentModel(listRes[0].id, listRes[0].name)
+          this.setCurrentModel(5, '通义千问 3.5 (本地、90亿参数)')
         }
         return listRes
       } catch (error) {
@@ -239,6 +239,7 @@ export const useChatStore = defineStore('chat', {
           this.currentModelId,
           search,
           audioFile,
+          this.activeId,
         )
       } catch (error) {
         list.splice(list.length - 2, 2)
@@ -278,7 +279,7 @@ export const useChatStore = defineStore('chat', {
       const id = Date.now()
       this.chatList.unshift({ id, title: '新对话' })
       this.messagesMap[id] = []
-      this.activeId = id
+      this.setActive(id)
     },
 
     stopStream() {

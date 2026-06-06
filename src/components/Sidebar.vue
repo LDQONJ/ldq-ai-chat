@@ -287,7 +287,7 @@ const select = async (id, isAuto = false) => {
       store.messagesMap[id] = []
       store.setActive(id)
     }
-    localStorage.setItem('sessionId', id)
+
     // 选择已有会话时清除新会话标志
     // 如果是自动选择（如刷新页面），或者选择的是空会话（新对话），不清除标志，保留新会话生成标题的能力
     const chat = store.chatList.find(c => c.id === id)
@@ -348,9 +348,6 @@ const createChat = async () => {
       // 设置为活跃会话
       store.setActive(newSessionId)
       store.setNewSessionId(newSessionId)
-
-      // 保存sessionId到本地存储
-      localStorage.setItem('sessionId', newSessionId)
 
       // 设置标志位，表示这是新创建的会话，尚未发送消息
       localStorage.setItem('isNewSession', 'true')
