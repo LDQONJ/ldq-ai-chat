@@ -15,7 +15,7 @@ export async function streamChat(
   console.log(messages)
   const userMessage = messages.filter(msg => msg.role === 'user')
   if (!userMessage.length) return
-  const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}/api`
   const token = localStorage.getItem('token')
   const headers = {}
   if (token) {
@@ -93,7 +93,7 @@ export async function streamChat(
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
 export async function generateTitle(id, onChunk) {
-  const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}/api`
   const token = localStorage.getItem('token')
   const headers = {}
   if (token) {
@@ -149,7 +149,7 @@ export async function generateTitle(id, onChunk) {
 }
 
 export async function streamASR(fileName, onChunk) {
-  const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}/api`
   const token = localStorage.getItem('token')
   const headers = {
     'Content-Type': 'text/plain',
@@ -209,7 +209,7 @@ export async function streamASR(fileName, onChunk) {
 }
 
 export async function streamTTS(messageId) {
-  const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}/api`
   const token = localStorage.getItem('token')
   const headers = {
     'Content-Type': 'text/plain',

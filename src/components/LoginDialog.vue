@@ -165,7 +165,8 @@ const form = reactive({
 
 const fullAvatarUrl = computed(() => {
   if (!form.avatar) return userStore.defaultAvatar
-  const host = import.meta.env.VITE_API_HOST
+  // const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}/api`
   return form.avatar.startsWith('http') ? form.avatar : `${host}${form.avatar}`
 })
 

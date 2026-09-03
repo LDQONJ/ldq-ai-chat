@@ -5,7 +5,7 @@ const host = import.meta.env.VITE_API_HOST
 
 // 创建 axios 实例
 const service = axios.create({
-  baseURL: host,
+  baseURL: 'api',
   timeout: 60000, // SSE 聊天可能需要较长时间，设置较长的超时
 })
 

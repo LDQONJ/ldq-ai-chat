@@ -209,7 +209,8 @@ const fullAvatarUrl = computed(() => {
     userStore.avatar.startsWith('data:')
   )
     return userStore.avatar
-  const host = import.meta.env.VITE_API_HOST
+  // const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}/api`
   return `${host}${userStore.avatar}`
 })
 

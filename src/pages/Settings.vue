@@ -396,7 +396,8 @@ const editForm = reactive({
 const getFullAvatarUrl = avatar => {
   if (!avatar) return userStore.defaultAvatar
   if (avatar.startsWith('http') || avatar.startsWith('data:')) return avatar
-  const host = import.meta.env.VITE_API_HOST
+  // const host = import.meta.env.VITE_API_HOST
+  const host = `${window.location.origin}`
   return `${host}${avatar}`
 }
 

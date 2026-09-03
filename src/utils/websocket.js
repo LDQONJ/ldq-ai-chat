@@ -14,7 +14,7 @@ class WebSocketManager {
   }
 
   getWsUrl() {
-    const host = import.meta.env.VITE_API_HOST || window.location.origin;
+    const host = window.location.origin;
     // Replace http:// or https:// with ws:// or wss://
     let wsUrl = host.replace(/^http/, 'ws');
     // Ensure it ends with /ws
