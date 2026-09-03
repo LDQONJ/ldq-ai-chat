@@ -156,8 +156,8 @@ const countdown = ref(60)
 const fileInput = ref(null)
 
 const form = reactive({
-  username: 'test',
-  password: '123456',
+  username: '',
+  password: '',
   email: '',
   code: '',
   avatar: '',
@@ -301,12 +301,14 @@ const handleSubmit = async () => {
 
 .dialog-content {
   background: var(--bg-sidebar);
+  border: 1px solid var(--border);
   width: 90%;
   max-width: 400px;
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
   color: var(--text-main);
+  backdrop-filter: blur(8px);
 }
 
 .dialog-header {
@@ -319,71 +321,148 @@ const handleSubmit = async () => {
 .dialog-header h2 {
   margin: 0;
   font-size: 20px;
+  font-weight: 600;
+  color: var(--text-main);
 }
 
 .close-btn {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   color: var(--text-sub);
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-main);
 }
 
 .form-item {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .form-item label {
   display: block;
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-sub);
 }
 
 .form-item input {
   width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg-active);
+  box-sizing: border-box;
+  padding: 11px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
   color: var(--text-main);
+  font-size: 14px;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form-item input::placeholder {
+  color: var(--text-sub);
+  opacity: 0.65;
+}
+
+.form-item input:hover {
+  border-color: var(--input-border-hover);
+}
+
+.form-item input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+/* 彻底解决浏览器记住密码 Autofill 导致的丑陋黄灰底色 */
+.form-item input:-webkit-autofill,
+.form-item input:-webkit-autofill:hover,
+.form-item input:-webkit-autofill:focus,
+.form-item input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--text-main) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+[data-theme='dark'] .form-item input:-webkit-autofill,
+[data-theme='dark'] .form-item input:-webkit-autofill:hover,
+[data-theme='dark'] .form-item input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #131b2c inset !important;
+  -webkit-text-fill-color: #f1f5f9 !important;
+}
+
+:root:not([data-theme='dark']) .form-item input:-webkit-autofill,
+:root:not([data-theme='dark']) .form-item input:-webkit-autofill:hover,
+:root:not([data-theme='dark']) .form-item input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #1e293b !important;
 }
 
 .input-with-btn {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .input-with-btn button {
-  padding: 0 12px;
-  border-radius: 6px;
-  border: none;
-  background: var(--bg-hover);
+  padding: 0 14px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
   color: var(--text-main);
+  font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.input-with-btn button:hover:not(:disabled) {
+  border-color: #3b82f6;
+  color: #3b82f6;
 }
 
 .input-with-btn button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .submit-btn {
   width: 100%;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: none;
-  background: #409eff;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 500;
   cursor: pointer;
-  margin-top: 16px;
+  margin-top: 18px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  opacity: 0.95;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+  transform: translateY(-1px);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .submit-btn:disabled {
-  background: #a0cfff;
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 /* 头像上传样式 */
@@ -399,7 +478,7 @@ const handleSubmit = async () => {
   width: 80px;
   height: 80px;
   flex-shrink: 0;
-  border: 2px dashed var(--border);
+  border: 2px dashed var(--input-border);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -407,11 +486,11 @@ const handleSubmit = async () => {
   cursor: pointer;
   overflow: hidden;
   transition: all 0.2s ease;
-  background: var(--bg-active);
+  background: var(--input-bg);
 }
 
 .avatar-container:hover {
-  border-color: #409eff;
+  border-color: #3b82f6;
   background: var(--bg-hover);
 }
 
@@ -475,8 +554,15 @@ const handleSubmit = async () => {
 }
 
 .mode-switch a {
-  color: #409eff;
+  color: #3b82f6;
   text-decoration: none;
   margin-left: 4px;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.mode-switch a:hover {
+  text-decoration: underline;
+  color: #60a5fa;
 }
 </style>

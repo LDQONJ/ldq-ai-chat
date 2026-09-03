@@ -3,13 +3,19 @@
   /* 暗色模式（默认） */
   --bg-main-dark: hsl(222, 47%, 11%);
   --bg-sidebar-dark: #22283a;
-  --bg-hover-dark: #434851;
-  --bg-active-dark: #3b3d3d;
+  --bg-hover-dark: #323b4e;
+  --bg-active-dark: #2c3448;
   --bg-card-dark: #2a3346;
   --text-main-dark: #e5e7eb;
   --text-sub-dark: #94a3b8;
-  --border-dark: rgba(255, 255, 255, 0.05);
+  --border-dark: rgba(255, 255, 255, 0.08);
   --add-chat-bg-dark: #43454a;
+
+  /* 输入框暗色变量 */
+  --input-bg-dark: rgba(15, 23, 42, 0.6);
+  --input-border-dark: rgba(255, 255, 255, 0.12);
+  --input-border-hover-dark: rgba(255, 255, 255, 0.22);
+  --input-border-focus-dark: #3b82f6;
 
   /* 亮色模式 */
   --bg-main-light: #ffffff;
@@ -21,6 +27,12 @@
   --text-sub-light: #81858c;
   --border-light: rgba(0, 0, 0, 0.1);
   --add-chat-bg-light: #fff;
+
+  /* 输入框亮色变量 */
+  --input-bg-light: #ffffff;
+  --input-border-light: #cbd5e1;
+  --input-border-hover-light: #94a3b8;
+  --input-border-focus-light: #3b82f6;
 
   --code-bg-dark: #0b1220;
   --code-header-bg-dark: #020617;
@@ -65,6 +77,10 @@
   --text-main: var(--text-main-light);
   --text-sub: var(--text-sub-light);
   --border: var(--border-light);
+  --input-bg: var(--input-bg-light);
+  --input-border: var(--input-border-light);
+  --input-border-hover: var(--input-border-hover-light);
+  --input-border-focus: var(--input-border-focus-light);
   --code-bg: var(--code-bg-light);
   --code-header-bg: var(--code-header-bg-light);
   --code-inline-bg: var(--code-inline-bg-light);
@@ -86,6 +102,10 @@
   --text-main: var(--text-main-dark);
   --text-sub: var(--text-sub-dark);
   --border: var(--border-dark);
+  --input-bg: var(--input-bg-dark);
+  --input-border: var(--input-border-dark);
+  --input-border-hover: var(--input-border-hover-dark);
+  --input-border-focus: var(--input-border-focus-dark);
   --code-bg: var(--code-bg-dark);
   --code-header-bg: var(--code-header-bg-dark);
   --code-inline-bg: var(--code-inline-bg-dark);
