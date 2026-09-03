@@ -117,6 +117,7 @@
           <el-select
             :model-value="loadingModels ? '' : chatStore.currentModelId"
             class="model-select"
+            popper-class="model-select-popper"
             :placeholder="loadingModels ? '加载中...' : '请选择模型'"
             :loading="loadingModels"
             :disabled="loadingModels"
@@ -1068,10 +1069,10 @@ onMounted(() => {
 :deep(.el-select__wrapper) {
   background-color: var(--bg-card) !important;
   box-shadow: 0 0 0 1px var(--border) inset !important;
-  border-radius: 8px;
-  padding: 8px 12px;
+  border-radius: 10px;
+  padding: 8px 14px;
   min-height: 44px;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 :deep(.el-select__wrapper:hover) {
@@ -1079,7 +1080,7 @@ onMounted(() => {
 }
 
 :deep(.el-select__wrapper.is-focused) {
-  box-shadow: 0 0 0 1px var(--primary) inset !important;
+  box-shadow: 0 0 0 1.5px var(--primary) inset, 0 0 0 3px rgba(37, 99, 235, 0.2) !important;
 }
 
 :deep(.el-select__placeholder) {
@@ -1120,36 +1121,6 @@ onMounted(() => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-/* 覆盖 Element Plus 的下拉菜单样式 */
-:deep(.el-select__popper) {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 12px !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-}
-
-:deep(.el-select-dropdown__item) {
-  height: auto !important;
-  padding: 8px 16px !important;
-}
-
-:deep(.el-select-dropdown__item.selected) {
-  background-color: var(--bg-active) !important;
-}
-
-:deep(.el-select-dropdown__item.selected .model-name) {
-  color: var(--primary) !important;
-}
-
-:deep(.el-select-dropdown__item.hover) {
-  background-color: var(--bg-hover) !important;
-}
-
-:deep(.el-popper__arrow::before) {
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border) !important;
 }
 
 .logout-section {

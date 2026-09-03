@@ -146,8 +146,14 @@
 }
 
 @font-face {
-    font-family: 'PingFangSC-Regular-woff2';
-    src: url('/fonts/PingFangSC-Regular.woff2') format('woff2');
+  font-family: 'PingFang SC';
+  src:
+    local('PingFang SC'),
+    local('PingFangSC-Regular'),
+    url('/fonts/PingFangSC-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -302,4 +308,93 @@ textarea,
 /* 滑块悬停效果 */
 ::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* ==========================================================================
+   Element Plus 下拉菜单（Popper）高级主题与微交互设计
+   ========================================================================== */
+.el-popper.el-select__popper,
+.model-select-popper {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.35),
+    0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
+  padding: 0 !important;
+  overflow: hidden;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+/* 清除内层容器的默认背景与边框，彻底消除嵌套的双层边框 */
+.el-popper.el-select__popper .el-select-dropdown,
+.model-select-popper .el-select-dropdown,
+.el-popper.el-select__popper .el-scrollbar,
+.model-select-popper .el-scrollbar,
+.el-popper.el-select__popper .el-scrollbar__wrap,
+.model-select-popper .el-scrollbar__wrap {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 箭头指向小三角配色同步 */
+.el-popper.el-select__popper .el-popper__arrow::before,
+.model-select-popper .el-popper__arrow::before {
+  background: var(--bg-card) !important;
+  border: 1px solid var(--border) !important;
+}
+
+/* 选项列表容器提供舒适的 6px 间隙 */
+.el-popper.el-select__popper .el-select-dropdown__list,
+.model-select-popper .el-select-dropdown__list {
+  padding: 6px !important;
+  background: transparent !important;
+}
+
+/* 选项卡片化 */
+.el-popper.el-select__popper .el-select-dropdown__item,
+.model-select-popper .el-select-dropdown__item {
+  height: auto !important;
+  min-height: 42px !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  margin-bottom: 2px !important;
+  color: var(--text-main) !important;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease !important;
+}
+
+.el-popper.el-select__popper .el-select-dropdown__item:last-child,
+.model-select-popper .el-select-dropdown__item:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Hover 悬停状态 */
+.el-popper.el-select__popper .el-select-dropdown__item.hover,
+.el-popper.el-select__popper .el-select-dropdown__item:hover,
+.model-select-popper .el-select-dropdown__item.hover,
+.model-select-popper .el-select-dropdown__item:hover {
+  background-color: var(--bg-hover) !important;
+  color: var(--text-main) !important;
+}
+
+/* Selected 当前选中项：高雅科技蓝微透背景 */
+.el-popper.el-select__popper .el-select-dropdown__item.selected,
+.model-select-popper .el-select-dropdown__item.selected {
+  background-color: rgba(37, 99, 235, 0.14) !important;
+  color: var(--primary) !important;
+  font-weight: 600 !important;
+}
+
+.el-popper.el-select__popper .el-select-dropdown__item.selected .model-name,
+.model-select-popper .el-select-dropdown__item.selected .model-name {
+  color: var(--primary) !important;
+}
+
+.el-popper.el-select__popper .el-select-dropdown__item.selected:hover,
+.model-select-popper .el-select-dropdown__item.selected:hover {
+  background-color: rgba(37, 99, 235, 0.2) !important;
 }
