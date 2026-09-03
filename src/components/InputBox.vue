@@ -315,16 +315,14 @@ const watchText = () => {
   width: 100%;
 }
 
-/* 输入框背景，防止下面两个角盖不住消息 */
+/* 输入框背景 */
 .input-bg {
   display: flex;
   flex-direction: column;
   /* 改为纵向布局以容纳 footer */
   align-items: flex-start;
   background: var(--bg-main);
-  border-top-left-radius: 16px;
-  border-top-right-radius: 16px;
-  transition: all 0.3s ease;
+  border-radius: 16px;
   max-width: 800px;
   position: relative;
   /* 为按钮定位提供参考 */
@@ -338,7 +336,7 @@ const watchText = () => {
   border-radius: 16px;
   padding: 4px;
   border: 1px solid var(--border);
-  transition: all 0.3s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
   width: 100%;
   height: 100%;
   position: relative;
