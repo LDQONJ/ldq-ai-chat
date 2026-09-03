@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "deploy": "vite build && scp -r ldq-ai hk3:/usr/share/nginx/html/ && ssh hk3 \"nginx -s reload\"",
     "preview": "vite preview",
     "lint": "eslint . --ext .js,.vue",
     "lint:fix": "eslint . --ext .js,.vue --fix",
