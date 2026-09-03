@@ -190,24 +190,33 @@ body {
   -webkit-touch-callout: none;
 }
 
-/* 全局默认禁用文本拖选与图片拖拽，打造原生客户端交互质感 */
-*,
-*::before,
-*::after {
+* {
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
 }
 
-/* 禁止任何图片被鼠标拖拽出虚影 */
+/* 禁止任何图片与头像被鼠标拖拽出虚影 */
 img {
   -webkit-user-drag: none;
   user-drag: none;
 }
 
-/* 白名单：所有输入框与文本域允许正常选中文本与编辑输入 */
+/* 核心内容视口保持自然的选择与点击清空行为 */
+html,
+body,
+.app,
+.main,
+.chat-window,
+.bubble,
+.user-content,
+.markdown,
+.transcription-text,
+.code-block,
+.thinking-content {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* 白名单：所有输入框与文本域允许正常光标聚焦与文本选择 */
 input,
 textarea,
 [contenteditable='true'],
@@ -217,31 +226,62 @@ textarea,
   -webkit-user-select: text !important;
 }
 
-/* 白名单：消息正文、代码块、思考过程允许自由划词高亮与复制 */
-.markdown,
-.markdown *,
-.user-content,
-.transcription-text,
-.code-block,
-.code-block *,
-.thinking-content,
-.thinking-content * {
-  user-select: text !important;
-  -webkit-user-select: text !important;
-}
-
-/* 消息中的控制类元素（如代码块复制按钮、折叠头）保持不可选中 */
-.copy-btn,
-.code-header,
-.code-header *,
-.thinking-header,
-.thinking-header *,
+/* 精准保护所有 UI 框架、按钮、图标与装饰性文本，禁止高亮选中与拖选 */
+.sidebar,
+.sidebar *,
+.sidebar-overlay,
+.top-left-actions,
+.top-left-actions *,
+.top-right-actions,
+.top-right-actions *,
+.top-title-container,
+.top-title-container *,
+.settings-header,
+.settings-header *,
+.footer-container,
+.footer-container *,
+.input-footer,
+.input-footer *,
+button,
+button *,
+.action-btn,
+.think-btn,
+.record-btn,
+.send-btn,
+.back-btn,
+.edit-btn,
+.save-btn,
+.cancel-btn,
+.logout-btn,
+.icon,
+.icon *,
+svg,
+/* 消息中的非内容元数据与控制条（划词时不会被误选） */
 .model-name,
 .model-loading-hint,
+.model-loading-hint *,
 .user-info,
-.user-info * {
+.user-info *,
+.user-avatar,
+.thinking-header,
+.thinking-header *,
+.code-header,
+.code-header *,
+.copy-btn,
+.audio-wave,
+.audio-duration,
+.play-btn,
+.upload-loading,
+/* 设置页与弹窗中的标签与标题 */
+.section-title,
+.section-header,
+.field label,
+.switch-container,
+.switch-container * {
   user-select: none !important;
   -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
 }
 
 /* 隐藏全局滚动条但保持可滚动 (仅在移动端或根据需要) */
