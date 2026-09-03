@@ -9,7 +9,16 @@
   --text-main-dark: #e5e7eb;
   --text-sub-dark: #94a3b8;
   --border-dark: rgba(255, 255, 255, 0.08);
-  --add-chat-bg-dark: #43454a;
+  --add-chat-bg-dark: rgba(255, 255, 255, 0.08);
+
+  /* 新对话按钮暗色变量 */
+  --btn-new-chat-bg-dark: rgba(255, 255, 255, 0.07);
+  --btn-new-chat-border-dark: rgba(255, 255, 255, 0.12);
+  --btn-new-chat-hover-dark: rgba(255, 255, 255, 0.13);
+  --btn-new-chat-hover-border-dark: rgba(255, 255, 255, 0.22);
+  --btn-new-chat-text-dark: #f1f5f9;
+  --btn-new-chat-shadow-dark: 0 2px 8px rgba(0, 0, 0, 0.25);
+  --btn-new-chat-shadow-hover-dark: 0 4px 14px rgba(0, 0, 0, 0.35);
 
   /* 输入框暗色变量 */
   --input-bg-dark: rgba(15, 23, 42, 0.6);
@@ -26,7 +35,16 @@
   --text-main-light: #1e293b;
   --text-sub-light: #81858c;
   --border-light: rgba(0, 0, 0, 0.1);
-  --add-chat-bg-light: #fff;
+  --add-chat-bg-light: #ffffff;
+
+  /* 新对话按钮亮色变量 */
+  --btn-new-chat-bg-light: #ffffff;
+  --btn-new-chat-border-light: rgba(0, 0, 0, 0.08);
+  --btn-new-chat-hover-light: #ffffff;
+  --btn-new-chat-hover-border-light: rgba(0, 0, 0, 0.16);
+  --btn-new-chat-text-light: #1e293b;
+  --btn-new-chat-shadow-light: 0 2px 6px rgba(0, 0, 0, 0.05);
+  --btn-new-chat-shadow-hover-light: 0 4px 12px rgba(0, 0, 0, 0.09);
 
   /* 输入框亮色变量 */
   --input-bg-light: #ffffff;
@@ -85,6 +103,13 @@
   --code-header-bg: var(--code-header-bg-light);
   --code-inline-bg: var(--code-inline-bg-light);
   --add-chat-bg: var(--add-chat-bg-light);
+  --btn-new-chat-bg: var(--btn-new-chat-bg-light);
+  --btn-new-chat-border: var(--btn-new-chat-border-light);
+  --btn-new-chat-hover: var(--btn-new-chat-hover-light);
+  --btn-new-chat-hover-border: var(--btn-new-chat-hover-border-light);
+  --btn-new-chat-text: var(--btn-new-chat-text-light);
+  --btn-new-chat-shadow: var(--btn-new-chat-shadow-light);
+  --btn-new-chat-shadow-hover: var(--btn-new-chat-shadow-hover-light);
   color-scheme: light;
 
   /* 安全区域适配 */
@@ -110,6 +135,13 @@
   --code-header-bg: var(--code-header-bg-dark);
   --code-inline-bg: var(--code-inline-bg-dark);
   --add-chat-bg: var(--add-chat-bg-dark);
+  --btn-new-chat-bg: var(--btn-new-chat-bg-dark);
+  --btn-new-chat-border: var(--btn-new-chat-border-dark);
+  --btn-new-chat-hover: var(--btn-new-chat-hover-dark);
+  --btn-new-chat-hover-border: var(--btn-new-chat-hover-border-dark);
+  --btn-new-chat-text: var(--btn-new-chat-text-dark);
+  --btn-new-chat-shadow: var(--btn-new-chat-shadow-dark);
+  --btn-new-chat-shadow-hover: var(--btn-new-chat-shadow-hover-dark);
   color-scheme: dark;
 }
 
@@ -148,8 +180,62 @@ body {
   letter-spacing: var(--letter-spacing);
   /* 禁止双指缩放，仅允许滚动 */
   touch-action: pan-x pan-y;
-  /* 禁止系统默认的长按选择文字行为（可选，增加原生感） */
+  /* 禁止系统默认的长按选择文字行为 */
   -webkit-touch-callout: none;
+}
+
+/* 全局默认禁用文本拖选与图片拖拽，打造原生客户端交互质感 */
+*,
+*::before,
+*::after {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* 禁止任何图片被鼠标拖拽出虚影 */
+img {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+/* 白名单：所有输入框与文本域允许正常选中文本与编辑输入 */
+input,
+textarea,
+[contenteditable='true'],
+[contenteditable='plaintext-only'],
+.selectable {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* 白名单：消息正文、代码块、思考过程允许自由划词高亮与复制 */
+.markdown,
+.markdown *,
+.user-content,
+.transcription-text,
+.code-block,
+.code-block *,
+.thinking-content,
+.thinking-content * {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* 消息中的控制类元素（如代码块复制按钮、折叠头）保持不可选中 */
+.copy-btn,
+.code-header,
+.code-header *,
+.thinking-header,
+.thinking-header *,
+.model-name,
+.model-loading-hint,
+.user-info,
+.user-info * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
 }
 
 /* 隐藏全局滚动条但保持可滚动 (仅在移动端或根据需要) */
@@ -162,10 +248,6 @@ body {
   *::-webkit-scrollbar {
     display: none; /* Chrome/Safari/Webkit (Android WebView) */
   }
-}
-
-* {
-  -webkit-tap-highlight-color: transparent;
 }
 
 /* 主题切换圆形扩散与收缩动画 */

@@ -19,7 +19,6 @@
 
     <div
       class="new-chat"
-      style="justify-content: center"
       @click="createChat"
     >
       <div class="new-chat-icon">
@@ -518,44 +517,60 @@ onMounted(() => {
 
 .new-chat {
   width: 100%;
-  padding: 13px;
+  padding: 11px 16px;
   margin-bottom: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: var(--add-chat-bg);
-  /* 添加长方形背景 */
-  border-radius: 25px;
-  /* 左右两边半圆效果 */
-  transition: all 0.3s ease;
+  background: var(--btn-new-chat-bg);
+  border: 1px solid var(--btn-new-chat-border);
+  color: var(--btn-new-chat-text);
+  border-radius: 24px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--btn-new-chat-shadow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .new-chat:hover {
-  /* background: var(--bg-active); */
-  /* 悬停时背景色变化 */
-  /* transform: scale(1.02); */
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  background: var(--btn-new-chat-hover);
+  border-color: var(--btn-new-chat-hover-border);
+  box-shadow: var(--btn-new-chat-shadow-hover);
+  transform: translateY(-1px);
+}
+
+.new-chat:active {
+  transform: translateY(0);
+  opacity: 0.85;
 }
 
 .new-chat-icon {
-  font-size: var(--font-size-main);
-  width: 16px;
-  height: 16px;
+  font-size: 17px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: var(--primary);
+  transition: transform 0.25s ease;
+}
+
+.new-chat:hover .new-chat-icon {
+  transform: rotate(90deg);
 }
 
 .new-chat-text {
-  font-size: 15px;
+  font-size: 14.5px;
+  font-weight: 500;
   height: 16px;
   line-height: 16px;
   display: flex;
   align-items: center;
   user-select: none;
+  letter-spacing: 0.02em;
 }
 
 .chat-list {
@@ -629,11 +644,11 @@ onMounted(() => {
   position: absolute;
   top: 100%;
   right: 5px;
-  background: var(--add-chat-bg);
+  background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   min-width: 100px;
   z-index: 100;
 }
