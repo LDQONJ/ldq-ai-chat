@@ -71,6 +71,7 @@
             <label>邮箱</label>
             <div class="input-with-btn">
               <input
+                ref="emailInputRef"
                 v-model="form.email"
                 type="email"
                 placeholder="请输入邮箱"
@@ -78,10 +79,12 @@
               />
               <button
                 type="button"
-                :disabled="sendingCode"
+                class="send-code-btn"
+                :disabled="requestingCode || isCountingDown"
                 @click="handleSendCode"
               >
-                {{ sendingCode ? `${countdown}s` : '获取验证码' }}
+                <span v-if="requestingCode" class="btn-spinner"></span>
+                <span>{{ requestingCode ? '发送中...' : isCountingDown ? `${countdown}s` : '获取验证码' }}</span>
               </button>
             </div>
           </div>
@@ -150,9 +153,11 @@ const emit = defineEmits(['update:visible', 'success'])
 const userStore = useUserStore()
 const isLoginMode = ref(true)
 const loading = ref(false)
-const sendingCode = ref(false)
+const requestingCode = ref(false)
+const isCountingDown = ref(false)
 const countdown = ref(60)
 const fileInput = ref(null)
+const emailInputRef = ref(null)
 
 const form = reactive({
   username: '',
@@ -210,27 +215,48 @@ const close = () => {
 }
 
 const handleSendCode = async () => {
-  if (!form.email) {
+  const email = form.email?.trim()
+  if (!email) {
     ElMessage.warning('请先输入邮箱')
+    emailInputRef.value?.focus()
     return
   }
 
+  // 基础邮箱格式校验
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (!emailRegex.test(email)) {
+    ElMessage.warning('请输入有效的邮箱格式')
+    emailInputRef.value?.focus()
+    return
+  }
+
+  if (requestingCode.value || isCountingDown.value) return
+
   try {
-    sendingCode.value = true
-    await codeApi.sendCode(form.email)
-    ElMessage.success('验证码已发送')
+    requestingCode.value = true
+    await codeApi.sendCode(email)
+    ElMessage({
+      message: '验证码已发送，如未收到请留意垃圾邮件箱',
+      type: 'success',
+      duration: 4000,
+    })
+
+    // 请求成功后退出加载状态，正式开启倒计时
+    requestingCode.value = false
+    isCountingDown.value = true
+    countdown.value = 60
 
     const timer = setInterval(() => {
       countdown.value--
       if (countdown.value <= 0) {
         clearInterval(timer)
-        sendingCode.value = false
+        isCountingDown.value = false
         countdown.value = 60
       }
     }, 1000)
   } catch (error) {
     ElMessage.error(error.message || '发送失败')
-    sendingCode.value = false
+    requestingCode.value = false
   }
 }
 
@@ -442,6 +468,31 @@ const handleSubmit = async () => {
   white-space: nowrap;
   flex-shrink: 0;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 88px;
+}
+
+.btn-spinner {
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: btn-spin 0.8s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes btn-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .input-with-btn button:hover:not(:disabled) {
@@ -629,6 +680,7 @@ const handleSubmit = async () => {
     padding: 0 10px;
     font-size: 12px;
     border-radius: 8px;
+    min-width: 80px;
   }
 
   .submit-btn {

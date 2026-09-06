@@ -216,7 +216,7 @@ body,
   -webkit-user-select: text;
 }
 
-/* 白名单：所有输入框与文本域允许正常光标聚焦与文本选择 */
+/* 白名单：所有输入框与文本域允许正常光标聚焦与手动输入文本选择 */
 input,
 textarea,
 [contenteditable='true'],
@@ -224,6 +224,28 @@ textarea,
 .selectable {
   user-select: text !important;
   -webkit-user-select: text !important;
+}
+
+/* 占位符（Placeholder）禁止被鼠标选中与拖选 */
+input::placeholder,
+textarea::placeholder,
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder,
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* 当处于占位提示状态（未输入真实文本）时，彻底禁止出现蓝色选区高亮 */
+input:placeholder-shown::selection,
+textarea:placeholder-shown::selection,
+input:placeholder-shown::-moz-selection,
+textarea:placeholder-shown::-moz-selection {
+  background: transparent !important;
+  color: inherit !important;
 }
 
 /* 精准保护所有 UI 框架、按钮、图标与装饰性文本，禁止高亮选中与拖选 */
@@ -272,6 +294,9 @@ svg,
 .audio-duration,
 .play-btn,
 .upload-loading,
+/* 欢迎标语与空状态提示 */
+.hello-text,
+.hello-text *,
 /* 设置页与弹窗中的标签与标题 */
 .section-title,
 .section-header,
@@ -314,13 +339,13 @@ svg,
 }
 [data-theme='dark']::view-transition-new(root) {
   z-index: 9999;
-  animation: vt-expand 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: vt-expand 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
 /* 深色切亮色：旧画面（深色）置顶，向按钮圆心收缩，平滑露出底下的亮色 */
 [data-theme='light']::view-transition-old(root) {
   z-index: 9999;
-  animation: vt-shrink 0.45s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: vt-shrink 0.7s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 [data-theme='light']::view-transition-new(root) {
   z-index: 1;
@@ -437,4 +462,12 @@ svg,
 .el-popper.el-select__popper .el-select-dropdown__item.selected:hover,
 .model-select-popper .el-select-dropdown__item.selected:hover {
   background-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+/* ==========================================================================
+   全局浮层层级保障（确保 ElMessage / ElNotification 永远浮于所有弹窗与全屏遮罩之上）
+   ========================================================================== */
+.el-message,
+.el-notification {
+  z-index: 99999 !important;
 }

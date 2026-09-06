@@ -348,6 +348,21 @@ const watchText = () => {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
 }
 
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+textarea::placeholder {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+}
+
+textarea:placeholder-shown::selection {
+  background: transparent !important;
+  color: inherit !important;
+}
+
 .input-footer {
   width: 100%;
   padding: 4px 8px;

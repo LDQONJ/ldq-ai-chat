@@ -53,6 +53,8 @@ const messages = computed(() => store.messages)
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .is-mobile .hello-text {
