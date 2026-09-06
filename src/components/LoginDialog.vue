@@ -28,7 +28,6 @@
             v-if="!isLoginMode"
             class="form-item avatar-upload"
           >
-            <label>头像</label>
             <div
               class="avatar-container"
               @click="triggerFileInput"
@@ -278,44 +277,46 @@ const handleSubmit = async () => {
 <style scoped>
 .dialog-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000; /* 确保高于侧边栏 (9999) */
-  /* 防止移动端输入法弹出时位移 */
-  padding-top: constant(safe-area-inset-top);
-  padding-top: env(safe-area-inset-top);
-}
-
-@media (max-width: 768px) {
-  .dialog-overlay {
-    align-items: flex-start; /* 移动端改为顶部对齐，防止输入法弹出导致的垂直居中重算 */
-    padding-top: 80px; /* 使用固定高度，防止 vh 单位随输入法弹出而变化 */
-  }
+  z-index: 10000;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .dialog-content {
   background: var(--bg-sidebar);
   border: 1px solid var(--border);
-  width: 90%;
-  max-width: 400px;
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 380px;
+  border-radius: 18px;
+  padding: 24px 24px 20px;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
   color: var(--text-main);
-  backdrop-filter: blur(8px);
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  max-height: min(90dvh, 680px);
+  margin: auto;
+  position: relative;
+  transition: all 0.3s ease;
 }
 
 .dialog-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
 .dialog-header h2 {
@@ -323,6 +324,7 @@ const handleSubmit = async () => {
   font-size: 20px;
   font-weight: 600;
   color: var(--text-main);
+  letter-spacing: -0.01em;
 }
 
 .close-btn {
@@ -331,7 +333,7 @@ const handleSubmit = async () => {
   font-size: 20px;
   width: 32px;
   height: 32px;
-  border-radius: 6px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -345,13 +347,24 @@ const handleSubmit = async () => {
   color: var(--text-main);
 }
 
+.dialog-body {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  padding: 1px;
+}
+
+.dialog-body::-webkit-scrollbar {
+  display: none;
+}
+
 .form-item {
-  margin-bottom: 18px;
+  margin-bottom: 14px;
 }
 
 .form-item label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   font-size: 13px;
   font-weight: 500;
   color: var(--text-sub);
@@ -360,8 +373,8 @@ const handleSubmit = async () => {
 .form-item input {
   width: 100%;
   box-sizing: border-box;
-  padding: 11px 14px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
   border: 1px solid var(--input-border);
   background: var(--input-bg);
   color: var(--text-main);
@@ -409,42 +422,50 @@ const handleSubmit = async () => {
 
 .input-with-btn {
   display: flex;
-  gap: 10px;
+  gap: 8px;
+}
+
+.input-with-btn input {
+  flex: 1;
+  min-width: 0;
 }
 
 .input-with-btn button {
   padding: 0 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid var(--input-border);
   background: var(--input-bg);
-  color: var(--text-main);
+  color: var(--primary);
   font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: all 0.2s ease;
 }
 
 .input-with-btn button:hover:not(:disabled) {
-  border-color: #3b82f6;
-  color: #3b82f6;
+  border-color: var(--primary);
+  background: var(--bg-hover);
 }
 
 .input-with-btn button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  color: var(--text-sub);
 }
 
 .submit-btn {
   width: 100%;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 11px;
+  border-radius: 10px;
   border: none;
   background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
   color: white;
   font-size: 15px;
   font-weight: 500;
   cursor: pointer;
-  margin-top: 18px;
+  margin-top: 14px;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
   transition: all 0.2s ease;
 }
@@ -470,13 +491,13 @@ const handleSubmit = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .avatar-container {
   position: relative;
-  width: 80px;
-  height: 80px;
+  width: 68px;
+  height: 68px;
   flex-shrink: 0;
   border: 2px dashed var(--input-border);
   border-radius: 50%;
@@ -490,7 +511,7 @@ const handleSubmit = async () => {
 }
 
 .avatar-container:hover {
-  border-color: #3b82f6;
+  border-color: var(--primary);
   background: var(--bg-hover);
 }
 
@@ -510,11 +531,12 @@ const handleSubmit = async () => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.45);
   color: white;
-  font-size: 12px;
+  font-size: 11px;
   opacity: 0;
   transition: opacity 0.2s;
+  text-align: center;
 }
 
 .upload-mask.always-show {
@@ -525,21 +547,14 @@ const handleSubmit = async () => {
 
 .avatar-container:hover .upload-mask {
   opacity: 1;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.5);
   color: white;
 }
 
-.upload-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  color: var(--text-sub);
-  font-size: 12px;
-}
-
 .plus-icon {
-  font-size: 24px;
-  margin-bottom: 4px;
+  font-size: 20px;
+  line-height: 1;
+  margin-bottom: 2px;
 }
 
 .hidden-input {
@@ -548,8 +563,8 @@ const handleSubmit = async () => {
 
 .mode-switch {
   text-align: center;
-  margin-top: 16px;
-  font-size: 14px;
+  margin-top: 14px;
+  font-size: 13.5px;
   color: var(--text-sub);
 }
 
@@ -564,5 +579,68 @@ const handleSubmit = async () => {
 .mode-switch a:hover {
   text-decoration: underline;
   color: #60a5fa;
+}
+
+/* 移动端专属微调 */
+@media (max-width: 768px) {
+  .dialog-content {
+    max-width: 350px;
+    padding: 20px 18px 16px;
+    border-radius: 16px;
+  }
+
+  .dialog-header {
+    margin-bottom: 12px;
+  }
+
+  .avatar-upload {
+    margin-bottom: 12px;
+  }
+
+  .avatar-container {
+    width: 60px;
+    height: 60px;
+  }
+
+  .plus-icon {
+    font-size: 18px;
+  }
+
+  .form-item {
+    margin-bottom: 10px;
+  }
+
+  .form-item label {
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .form-item input {
+    padding: 8.5px 12px;
+    font-size: 13.5px;
+    border-radius: 8px;
+  }
+
+  .input-with-btn {
+    gap: 6px;
+  }
+
+  .input-with-btn button {
+    padding: 0 10px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .submit-btn {
+    padding: 9.5px;
+    font-size: 14px;
+    margin-top: 10px;
+    border-radius: 8px;
+  }
+
+  .mode-switch {
+    margin-top: 10px;
+    font-size: 12.5px;
+  }
 }
 </style>
