@@ -35,7 +35,7 @@ export const useChatStore = defineStore('chat', {
         const listRes = await modelApi.list()
         // 如果当前没有选择模型，默认选择通义千问3.5 9B
         if (!this.currentModelId && listRes.length > 0) {
-          this.setCurrentModel(5, '通义千问 3.5 (本地、90亿参数)')
+          this.setCurrentModel(5, '千问 3.8 Max')
         }
         return listRes
       } catch (error) {
