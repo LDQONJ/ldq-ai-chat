@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { wsManager } from '../utils/websocket'
+import { handleAuthExpired } from '../utils/request'
 
 export async function streamChat(
   messages,
@@ -42,6 +43,10 @@ export async function streamChat(
   })
 
   if (!res.ok) {
+    if (res.status === 401) {
+      handleAuthExpired()
+      throw new Error('登录已失效，请重新登录')
+    }
     if (res.status === 429) {
       throw new Error('访问频繁，稍后再试')
     }
@@ -106,6 +111,10 @@ export async function generateTitle(id, onChunk) {
   })
 
   if (!res.ok) {
+    if (res.status === 401) {
+      handleAuthExpired()
+      throw new Error('登录已失效，请重新登录')
+    }
     if (res.status === 429) {
       throw new Error('访问频繁，稍后再试')
     }
@@ -165,6 +174,10 @@ export async function streamASR(fileName, onChunk) {
   })
 
   if (!res.ok) {
+    if (res.status === 401) {
+      handleAuthExpired()
+      throw new Error('登录已失效，请重新登录')
+    }
     if (res.status === 429) {
       throw new Error('访问频繁，稍后再试')
     }
@@ -225,6 +238,10 @@ export async function streamTTS(messageId) {
   })
 
   if (!res.ok) {
+    if (res.status === 401) {
+      handleAuthExpired()
+      throw new Error('登录已失效，请重新登录')
+    }
     if (res.status === 429) {
       throw new Error('访问频繁，稍后再试')
     }
