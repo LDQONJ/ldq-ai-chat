@@ -2,13 +2,15 @@ import { defineStore } from 'pinia'
 import { streamChat, generateTitle, streamASR } from '../api/stream'
 import { createMarkdownStreamParser } from '../utils/markdownStreamParser'
 import { modelApi } from '../api/model'
+import { sessionApi } from '../api/session'
 import { ElMessage } from 'element-plus'
 import { wsManager } from '../utils/websocket'
+import router from '../router'
 
 export const useChatStore = defineStore('chat', {
   state: () => ({
     chatList: [],
-    activeId: localStorage.getItem('sessionId') || null,
+    activeId: null,
     messagesMap: {},
     isStreaming: false,
     sidebarVisible: true,
@@ -71,8 +73,63 @@ export const useChatStore = defineStore('chat', {
       }
     },
 
+    async ensureActiveSession() {
+      if (!this.activeId) {
+        try {
+          const newSessionId = await sessionApi.create()
+          if (newSessionId) {
+            this.setActive(newSessionId)
+            this.messagesMap[newSessionId] = []
+            this.chatList.unshift({ id: newSessionId, title: '新对话', lastMessage: '' })
+            router.replace('/' + newSessionId)
+            return newSessionId
+          }
+        } catch (e) {
+          console.error('创建会话失败:', e)
+        }
+        const fallbackId = String(Date.now())
+        this.setActive(fallbackId)
+        this.messagesMap[fallbackId] = []
+        this.chatList.unshift({ id: fallbackId, title: '新对话', lastMessage: '' })
+        router.replace('/' + fallbackId)
+        return fallbackId
+      }
+      return this.activeId
+    },
+
+    async loadSession(id) {
+      if (!id) return false
+      if (this.isStreaming && this.activeId === id) return true
+      try {
+        const sessionDetail = await sessionApi.queryById(id)
+        if (sessionDetail && sessionDetail.messages) {
+          const formattedMessages = sessionDetail.messages.map(msg => ({
+            id: msg.id || (Date.now() + Math.random()),
+            role: msg.role,
+            name: msg.name,
+            thinking: msg.thinking || '',
+            content: msg.content || '',
+            type: msg.audio ? 'audio' : 'text',
+            audioPath: msg.audio || '',
+            transcription: msg.audio ? msg.content : '',
+            blocks: msg.content ? [{ type: 'text', content: msg.content }] : [],
+          }))
+          this.messagesMap[id] = formattedMessages
+        } else {
+          this.messagesMap[id] = []
+        }
+        this.setActive(id)
+        return true
+      } catch (error) {
+        console.error('获取会话详情失败:', error)
+        throw error
+      }
+    },
+
     async sendAudio(fileUrl, isUploading = false) {
       if (this.isStreaming) return
+
+      await this.ensureActiveSession()
 
       const list = this.messagesMap[this.activeId] || []
       const id = Date.now()
@@ -134,6 +191,8 @@ export const useChatStore = defineStore('chat', {
 
     async sendStream(text, audioFile = null, skipUserMsg = false) {
       if (this.isStreaming) return
+
+      await this.ensureActiveSession()
 
       const list = this.messagesMap[this.activeId] || []
       this.isStreaming = true
@@ -291,8 +350,12 @@ export const useChatStore = defineStore('chat', {
     },
 
     setActive(id) {
-      this.activeId = id
-      localStorage.setItem('sessionId', id)
+      this.activeId = id || null
+      if (id) {
+        localStorage.setItem('sessionId', id)
+      } else {
+        localStorage.removeItem('sessionId')
+      }
     },
 
     setSidebarVisible(visible) {

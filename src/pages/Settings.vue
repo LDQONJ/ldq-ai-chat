@@ -588,14 +588,14 @@ const handleLogout = () => {
       userStore.logout()
       chatStore.reset()
       ElMessage.success('已退出登录')
-      router.push('/home')
+      router.push('/')
     })
     .catch(() => {})
 }
 
 onMounted(() => {
   if (!userStore.isLoggedIn) {
-    router.push('/home')
+    router.push('/')
     return
   }
   fetchModels()

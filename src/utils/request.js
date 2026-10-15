@@ -3,8 +3,6 @@ import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
 import router from '@/router'
 
-const host = import.meta.env.VITE_API_HOST
-
 // 创建 axios 实例
 const service = axios.create({
   baseURL: 'api',
@@ -22,7 +20,7 @@ const handleAuthExpired = (message = '登录已失效，请重新登录') => {
   try {
     const userStore = useUserStore()
     userStore.logout()
-  } catch (e) {
+  } catch {
     localStorage.removeItem('token')
     localStorage.removeItem('userInfo')
   }
@@ -38,7 +36,7 @@ const handleAuthExpired = (message = '登录已失效，请重新登录') => {
 
   // 3. 若当前处于需要鉴权的页面（例如 /settings），平滑回退到首页
   if (router.currentRoute.value?.path === '/settings') {
-    router.replace('/home')
+    router.replace('/')
   }
 }
 

@@ -101,11 +101,11 @@ import {
   onActivated,
   onDeactivated,
 } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useChatStore } from '@/store/chat'
 import { useUserStore } from '@/store/user'
 import { userApi } from '@/api/user'
-import { sessionApi } from '@/api/session'
 import Sidebar from '@/components/Sidebar.vue'
 import ChatWindow from '@/components/ChatWindow.vue'
 import InputBox from '@/components/InputBox.vue'
@@ -119,6 +119,7 @@ defineOptions({
 const store = useChatStore()
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 const messages = computed(() => store.messages)
 const currentChatTitle = computed(() => {
   const chat = store.chatList.find(c => c.id === store.activeId)
@@ -203,32 +204,28 @@ const refreshUserInfo = async () => {
     }
   }
 }
-// 创建会话
-const createSession = async () => {
-  try {
-    const sessionId = await sessionApi.create()
-    if (sessionId) {
-      localStorage.setItem('isNewSession', 'true')
-      store.setActive(sessionId)
-      store.messagesMap[sessionId] = []
-
-      // 立即添加到侧边栏列表
-      const isInList = store.chatList.some(chat => chat.id === sessionId)
-      if (!isInList) {
-        store.chatList.unshift({
-          id: sessionId,
-          title: '新对话',
-          lastMessage: '',
-        })
+// 监听路由参数 sessionId，实现 Deep Link、前进/后退及切换会话
+watch(
+  () => route.params.sessionId,
+  async newSessionId => {
+    if (newSessionId) {
+      // 若当前活跃会话已是该 ID 且内存中已有数据（例如发送第一条消息后 replace 路由），避免重复拉取覆盖流式消息
+      if (store.activeId === newSessionId && store.messagesMap[newSessionId]) {
+        return
       }
-
-      console.log('新对话创建成功，sessionId:', sessionId)
+      try {
+        await store.loadSession(newSessionId)
+      } catch {
+        ElMessage.warning('会话不存在或已删除')
+        router.replace('/')
+      }
+    } else {
+      // 访问根路径 / 时重置当前会话，显示“你好，想聊点什么？”
+      store.setActive(null)
     }
-  } catch (error) {
-    console.error('创建新对话失败:', error)
-    ElMessage.error(error.message || '创建新对话失败')
-  }
-}
+  },
+  { immediate: true },
+)
 
 // 响应式处理侧边栏
 let lastWidth = window.innerWidth
@@ -252,42 +249,12 @@ const toggleSidebar = () => {
   store.setSidebarVisible(!store.sidebarVisible)
 }
 
-const createChatFromCollapsed = async () => {
-  // 如果有新会话且没有消息，不创建新会话
-  if (
-    store.newSessionId &&
-    store.messagesMap[store.newSessionId].length === 0
-  ) {
-    store.setActive(store.newSessionId)
-    return
+const createChatFromCollapsed = () => {
+  if (route.path !== '/') {
+    router.push('/')
+  } else {
+    store.setActive(null)
   }
-
-  try {
-    const newSessionId = await sessionApi.create()
-    if (newSessionId) {
-      store.messagesMap[newSessionId] = []
-      store.setActive(newSessionId)
-      localStorage.setItem('isNewSession', 'true')
-      sessionStorage.setItem('is_session_active', 'true')
-
-      // 立即添加到侧边栏列表
-      const isInList = store.chatList.some(chat => chat.id === newSessionId)
-      if (!isInList) {
-        store.chatList.unshift({
-          id: newSessionId,
-          title: '新对话',
-          lastMessage: '',
-        })
-      }
-      return
-    }
-  } catch (error) {
-    console.error('创建新会话失败:', error)
-  }
-
-  store.createChat()
-  localStorage.setItem('isNewSession', 'true')
-  sessionStorage.setItem('is_session_active', 'true')
 }
 
 // 监听消息发送，如果是移动端则自动收起侧边栏
@@ -309,21 +276,6 @@ onMounted(() => {
 
   refreshUserInfo()
   store.fetchModels()
-
-  const token = localStorage.getItem('token')
-  if (!token) {
-    // 未登录用户：每次刷新页面都清空旧会话并创建新会话
-    localStorage.removeItem('sessionId')
-    localStorage.removeItem('isNewSession')
-    store.activeId = null
-    createSession()
-  } else {
-    // 已登录用户：区分刷新和重新打开（sessionStorage 在标签页关闭后会清除）
-    if (!sessionStorage.getItem('is_session_active')) {
-      createSession()
-      sessionStorage.setItem('is_session_active', 'true')
-    }
-  }
 
   // 监听输入框高度变化
   if (inputContainerRef.value) {

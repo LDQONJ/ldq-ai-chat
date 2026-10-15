@@ -3,17 +3,15 @@ import Home from '@/pages/Home.vue'
 import Settings from '@/pages/Settings.vue'
 
 const routes = [
-  //默认路由重定向到首页
-  { path: '/', redirect: '/home' },
-  {
-    path: '/home',
-    name: 'Home',
-    component: Home,
-  },
   {
     path: '/settings',
     name: 'Settings',
     component: Settings,
+  },
+  {
+    path: '/:sessionId?',
+    name: 'Home',
+    component: Home,
   },
   // 404 重定向到首页
   {

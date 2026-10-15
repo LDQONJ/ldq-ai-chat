@@ -173,7 +173,7 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 
 import { useChatStore } from '@/store/chat'
 import { useUserStore } from '@/store/user'
@@ -186,6 +186,7 @@ import { ElMessage } from 'element-plus'
 const store = useChatStore()
 const userStore = useUserStore()
 const router = useRouter()
+const route = useRoute()
 
 const chats = computed(() => store.chatList)
 const activeId = computed(() => store.activeId)
@@ -230,17 +231,9 @@ const fetchSessionList = async () => {
 
       // 保存到本地存储
       localStorage.setItem('sessionList', JSON.stringify(sessionList))
-
-      // 如果有会话且没有设置过活跃会话，设置第一个为活跃会话
-      // 如果已经有活跃会话（刷新页面），加载该会话的消息
-      if (store.activeId) {
-        select(store.activeId, true)
-      } else if (chatList.length > 0) {
-        select(chatList[0].id, true)
-      }
     }
   } catch (error) {
-    console.error('获取对话列表失败:', error) 
+    console.error('获取对话列表失败:', error)
     ElMessage.error(error.message || '获取对话列表失败')
   }
 }
@@ -258,112 +251,27 @@ const handleUserClick = () => {
   }
 }
 
-const select = async (id, isAuto = false) => {
+const select = (id) => {
   // 点击聊天项时，关闭更多菜单
   itemMenuVisibleId.value = null
-  try {
-    // 调用接口获取会话详情
-    const sessionDetail = await sessionApi.queryById(id)
 
-    if (sessionDetail && sessionDetail.messages) {
-      // 将sessionVO中的messages转换为store中的格式
-      const formattedMessages = sessionDetail.messages.map(msg => ({
-        id: msg.id || (Date.now() + Math.random()), // 优先使用后端ID
-        role: msg.role,
-        name: msg.name,
-        thinking: msg.thinking || '',
-        content: msg.content || '',
-        type: msg.audio ? 'audio' : 'text',
-        audioPath: msg.audio || '',
-        transcription: msg.audio ? msg.content : '', // 如果是语音消息，content 就是转写内容
-        blocks: msg.content ? [{ type: 'text', content: msg.content }] : [],
-      }))
+  if (route.params.sessionId === id) return
 
-      // 更新store中的消息
-      store.messagesMap[id] = formattedMessages
-      store.setActive(id)
-    } else {
-      // 如果没有消息数据，设置空消息列表
-      store.messagesMap[id] = []
-      store.setActive(id)
-    }
+  router.push('/' + id)
 
-    // 选择已有会话时清除新会话标志
-    // 如果是自动选择（如刷新页面），或者选择的是空会话（新对话），不清除标志，保留新会话生成标题的能力
-    const chat = store.chatList.find(c => c.id === id)
-    const isNewChat = chat && chat.title === '新对话'
-    if (!isAuto && !isNewChat) {
-      localStorage.removeItem('isNewSession')
-    }
-
-    // 如果是窄屏模式，选择聊天后自动收起
-    if (window.innerWidth < 768 && !isAuto) {
-      store.setSidebarVisible(false)
-    }
-  } catch (error) {
-    console.error('获取会话详情失败:', error)
-    // 核心修复：如果查询失败（例如会话已被后端清理），重新创建新会话
-    if (isAuto) {
-      console.log('自动恢复失败，尝试创建新会话...')
-      createChat()
-    } else {
-      // 用户点击导致的失败，尝试从列表中移除该项（可选，目前至少保证不崩溃）
-      store.setActive(id)
-    }
-
-    // 如果是窄屏模式，选择聊天后自动收起
-    if (window.innerWidth < 768 && !isAuto) {
-      store.setSidebarVisible(false)
-    }
+  // 如果是窄屏模式，选择聊天后自动收起
+  if (window.innerWidth < 768) {
+    store.setSidebarVisible(false)
   }
 }
-const createChat = async () => {
-  // 如果有新会话且没有消息，不创建新会话
-  if (
-    store.newSessionId &&
-    store.messagesMap[store.newSessionId].length === 0
-  ) {
-    store.setActive(store.newSessionId)
-    return
-  }
 
-  try {
-    // 调用session/create接口创建新会话
-    const newSessionId = await sessionApi.create()
+const createChat = () => {
+  itemMenuVisibleId.value = null
 
-    if (newSessionId) {
-      // 设置空消息列表
-      store.messagesMap[newSessionId] = []
-
-      // 立即添加到侧边栏列表
-      const isInList = store.chatList.some(chat => chat.id === newSessionId)
-      if (!isInList) {
-        store.chatList.unshift({
-          id: newSessionId,
-          title: '新对话',
-          lastMessage: '',
-        })
-      }
-
-      // 设置为活跃会话
-      store.setActive(newSessionId)
-      store.setNewSessionId(newSessionId)
-
-      // 设置标志位，表示这是新创建的会话，尚未发送消息
-      localStorage.setItem('isNewSession', 'true')
-      // 标志当前会话已激活，防止刷新后再次自动创建
-      sessionStorage.setItem('is_session_active', 'true')
-    } else {
-      // 如果接口调用失败，使用原来的createChat逻辑
-      store.createChat()
-      localStorage.setItem('isNewSession', 'true')
-    }
-  } catch (error) {
-    console.error('创建新对话失败:', error)
-    ElMessage.error(error.message || '创建新对话失败')
-    // 出错时使用原来的createChat逻辑
-    store.createChat()
-    localStorage.setItem('isNewSession', 'true')
+  if (route.path !== '/') {
+    router.push('/')
+  } else {
+    store.setActive(null)
   }
 
   // 如果是窄屏模式，创建聊天后自动收起侧边栏
@@ -431,9 +339,9 @@ const handleDelete = async id => {
     }
     if (store.activeId === id) {
       if (store.chatList.length > 0) {
-        select(store.chatList[0].id)
+        router.replace('/' + store.chatList[0].id)
       } else {
-        createChat()
+        router.replace('/')
       }
     }
     ElMessage.success('删除成功')

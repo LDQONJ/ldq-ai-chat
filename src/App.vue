@@ -75,7 +75,7 @@ const setupBackButton = () => {
 
     // 2. 如果在设置页，则返回主页
     if (route.path === '/settings') {
-      router.push('/home')
+      router.push('/')
       return
     }
 
@@ -102,9 +102,9 @@ onUnmounted(() => {
 watch(
   () => route.path,
   (to, from) => {
-    if (to === '/settings' && from === '/home') {
+    if (to === '/settings') {
       transitionName.value = 'slide-left'
-    } else if (to === '/home' && from === '/settings') {
+    } else if (from === '/settings') {
       transitionName.value = 'slide-right'
     } else {
       transitionName.value = ''
